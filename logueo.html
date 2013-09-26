@@ -1,0 +1,73 @@
+<html>
+<head>
+<script type="text/javascript">
+    var db;
+    function init() {
+        db = openDatabase("DB Prueba", "0.1", "Database Prueba", 200000);
+        if (db) {
+            // Database opened
+            db.transaction( function(tx) {
+                tx.executeSql("CREATE TABLE IF NOT EXISTS usuarios(userid integer primary key autoincrement, username text, password text)")
+            });
+        }
+ 
+        listUsers();
+ 
+    }
+ 
+    
+	
+	
+	 function viewUsers(users) {
+		 var place = document.getElementById("busquerDiv");
+		 if(users==''){ place.innerHTML='no est&aacute;s registrado'; location.href='noregistro.html'; } else {place.innerHTML='est&aacute;s registrado'; location.href='registro.html';}
+		  
+        
+		 
+    }
+ 
+    
+ 
+ 
+     function listbuscaUsers(usernamede, passworde) {
+		 
+		         db.transaction( function(tx) {
+            tx.executeSql("SELECT * FROM usuarios WHERE username = ? AND password = ?", [usernamede, passworde],
+                function(tx, result){
+                    var output = [];
+                    for(var i=0; i < result.rows.length; i++) {
+                        output.push([result.rows.item(i)['userid'],
+                                result.rows.item(i)['username'],
+                                result.rows.item(i)['password']]);
+                    }
+					if(output==[]){var nada='nada';viewUsers(nada);} else {viewUsers(output);}
+ 
+                });
+        });
+    }
+ 
+ 
+ 
+ 
+    
+
+ 
+   
+</script>
+</head>
+<body onLoad="init()">
+
+<div id="busquerDiv">
+    
+</div>
+
+
+<div id="buscauser">
+    Logueo<br/>
+    Usuario: <input type="text" id="usernamebusc"/><br/>
+    Password: <input type="password" id="passwordbusc"/><br/>
+    <button onClick="listbuscaUsers(usernamebusc.value, passwordbusc.value)">loggin User</button>
+</div>
+</body>
+ 
+</html>
